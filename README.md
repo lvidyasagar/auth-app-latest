@@ -8,7 +8,8 @@ In the project directory, you can run:
 
 ### `npm run build`
 
-To generate the build files inside the `dist` folder
+To generate the build files inside the `dist` folder.
+
 we can create custom npm package using `npm pack` command in the project root folder. then it will create `auth-app-latest-xxx.tgz` file, which we can use by installing this npm package in other React projects.
 
 **Note: This project builds files based on rollup configuration provided in the `rollup.config.js`.
