@@ -38,6 +38,7 @@ as these dependencies are `peerDependencies` to this library, so these four depe
 
 ## Example
 
+_App.tsx_
 ```
 import React from "react";
 
@@ -49,6 +50,13 @@ function App() {
 
 export default App;
 ```
+_index.scss_
+
+```
+@import "~auth-app-latest/dist/index";
+
+```
+
 
 ## Learn More
 
