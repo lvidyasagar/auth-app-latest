@@ -1,33 +1,18 @@
 import React, { FC, useEffect, useState, useCallback } from "react";
-import axios, { AxiosResponse } from "axios";
-import {
-  getLogin,
-  getLoginType,
-  getUser,
-  LoginType,
-  removeLogin,
-  removeUser,
-  setLogin,
-  setUser,
-} from "../utils/localstorage.helper";
+import { getLogin, removeLogin, setLogin } from "../utils/localstorage.helper";
 import { useOktaAuth } from "@okta/okta-react";
-import { useHistory } from "react-router-dom";
-import * as Constants from "../utils/constants";
+import { AuthConstants } from "../utils/constants";
 
 interface AuthStateType {
   isLoggedIn: boolean;
   isAdmin: boolean;
-  error: boolean;
-  clearError: () => void;
-  onLogin: (email?, password?) => void;
+  onLogin: () => void;
   onLogout: () => void;
 }
 
 const AuthContext = React.createContext<AuthStateType>({
   isLoggedIn: false,
   isAdmin: false,
-  error: false,
-  clearError: () => {},
   onLogin: () => {},
   onLogout: () => {},
 });
@@ -35,18 +20,11 @@ const AuthContext = React.createContext<AuthStateType>({
 export const AuthContextProvider: FC = (props) => {
   const [isLoggedIn, setisLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
-  const [error, setError] = useState(false);
   const { authState, oktaAuth } = useOktaAuth();
-  const history = useHistory();
 
   const checkIsAdmin = useCallback(() => {
-    if (getLoginType() === LoginType.Okta) {
-      const groups: string[] = authState?.accessToken?.claims.group;
-      setIsAdmin(groups?.includes(Constants.ADMIN_ROLE));
-    }
-    if (getLoginType() === LoginType.Local) {
-      setIsAdmin(getUser()?.role === Constants.ADMIN_ROLE);
-    }
+    const groups: string[] = authState?.accessToken?.claims.group;
+    setIsAdmin(groups?.includes(AuthConstants.roles.ADMIN_ROLE));
   }, [authState?.accessToken?.claims.group]);
 
   useEffect(() => {
@@ -58,44 +36,20 @@ export const AuthContextProvider: FC = (props) => {
       setLogin();
       setisLoggedIn(true);
     }
+    if (!authState?.isAuthenticated) {
+      removeLogin();
+      setisLoggedIn(false);
+    }
     checkIsAdmin();
   }, [checkIsAdmin, authState?.isAuthenticated]);
 
-  const loginHandler = async (email, password) => {
-    if (getLoginType() === LoginType.Local) {
-      axios
-        .post("http://localhost:3001/login", { email, password })
-        .then((res: AxiosResponse) => {
-          if (res.data && res.data.token) {
-            setLogin();
-            setisLoggedIn(true);
-            setUser(JSON.stringify(res.data));
-            checkIsAdmin();
-            history.push({ pathname: "/" });
-          }
-        })
-        .catch(() => {
-          setisLoggedIn(false);
-          setError(true);
-        });
-    } else {
-      await oktaAuth.signInWithRedirect({ originalUri: "/" });
-    }
+  const loginHandler = async () => {
+    await oktaAuth.signInWithRedirect({ originalUri: AuthConstants.postAuthRedirectURI });
   };
 
   const logoutHandler = () => {
-    if (getLoginType() === LoginType.Local) {
-      removeUser();
-      setisLoggedIn(false);
-      history.push("/");
-    } else {
-      oktaAuth.signOut({});
-    }
+    oktaAuth.signOut({});
     removeLogin();
-  };
-
-  const clearErrorHandler = () => {
-    error && setError(false);
   };
 
   return (
@@ -103,8 +57,6 @@ export const AuthContextProvider: FC = (props) => {
       value={{
         isLoggedIn: isLoggedIn,
         isAdmin: isAdmin,
-        error: error,
-        clearError: clearErrorHandler,
         onLogin: loginHandler,
         onLogout: logoutHandler,
       }}

@@ -10,7 +10,7 @@ import copy from "rollup-plugin-copy";
 const packageJson = require("./package.json");
 
 export default [{
-    input: "src/index.tsx",
+    input: "src/index.ts",
     output: [
         {
             file: packageJson.module,
@@ -20,7 +20,7 @@ export default [{
     ],
     plugins: [
         peerDepsExternal(),
-        resolve(),
+        resolve({ preferBuiltins: true }),
         commonjs(),
         typescript({ tsconfig: './tsconfig.json' }),
         bundleScss(),

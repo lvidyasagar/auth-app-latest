@@ -29,12 +29,12 @@ $regular-font2-size: 20px;
 $bold-header1-size: 72px;
 $bold-header2-size: 58px;
 $bold-header3-size: 24px;
-$text-color:#fff;
-$bg-color:#014361;
-$color1: #A5B2B6;
-$color2:#202B34;
-$btn-color1: #A5B2B6;
-$btn-color2: #EAEDEF;
+$text-color: #fff;
+$bg-color: #014361;
+$color1: #a5b2b6;
+$color2: #202b34;
+$btn-color1: #a5b2b6;
+$btn-color2: #eaedef;
 $btn-padding: 12px 25px;
 $btn-margin: 5px;
 
@@ -47,6 +47,9 @@ $btn-margin: 5px;
 body {
   margin: 0;
   padding: 0;
+}
+
+.pk-auth.container-fluid {
   font-size: $regular-font1-size;
   color: $text-color;
   text-align: center;
@@ -81,24 +84,26 @@ h3 {
   font-size: $bold-header3-size;
 }
 
-label{
+label {
   color: $color1;
 }
 
-button,
-.button {
+.pk-button {
   background-color: $btn-color1;
   padding: $btn-padding;
   margin: $btn-margin;
   border: none;
   color: $color2;
   border-radius: 7px;
-  &:hover, &:disabled, &:active, &:focus{
+  &:hover,
+  &:disabled,
+  &:active,
+  &:focus {
     background-color: $btn-color2;
     color: $color2;
     border: none;
   }
-  &:disabled{
+  &:disabled {
     pointer-events: auto;
     cursor: not-allowed;
   }

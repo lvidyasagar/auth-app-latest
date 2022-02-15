@@ -2,21 +2,9 @@
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### `npm install auth-app-latest`
 
-In the project directory, you can run:
-
-### `npm install`
-
-To install the required packages.
-
-### `npm run build`
-
-To generate the build files inside the `dist` folder.
-
-we can create custom npm package using `npm pack` command in the project root folder. then it will create `auth-app-latest-xxx.tgz` file, which we can use by installing this npm package in other React projects.
-
-\*\*Note: This project builds files based on rollup configuration provided in the `rollup.config.js`.
+To install the `auth-app-latest` library.
 
 ## Usage
 
@@ -29,27 +17,46 @@ _package.json_
             "react": "^17.0.2",
             "react-dom": "^17.0.2",
             "react-router": "^5.2.1",
-            "react-router-dom": "^5.3.0"
+            "react-router-dom": "^5.3.0",
+            "react-scripts": "^4.0.3"
         }
     }
 ```
 
-as these dependencies are `peerDependencies` to this library, so these four dependencies must be available to use `auth-app-latest` library.
+as these dependencies are `peerDependencies` to this library, so these four dependencies must be installed with same version to use the `auth-app-latest` library.
 
 ## Example
 
 _App.tsx_
+
 ```
 import React from "react";
 
-import AuthApp from "auth-app-latest";
+import {AuthApp,AuthConfig} from "auth-app-latest";
+import { BrowserRouter } from "react-router-dom";
 
+const config: AuthConfig = {
+  config: {
+    clientId: "xxxxxxxxxxxxxx",
+    issuer: "https://{your-domain-id}.okta.com/oauth2/default",
+    redirectUri: "http://localhost:3000/login/callback",
+    scopes: ["openid", "profile", "email"],
+    pkce: true,
+  },
+  roles: {
+    ADMIN_GROUP: "admin",
+    USER_GROUP: "local",
+  },
+};
 function App() {
-  return <AuthApp />;
+  return <BrowserRouter>
+        <AuthApp {...config} />
+      </BrowserRouter>;
 }
 
 export default App;
 ```
+
 _index.scss_
 
 ```
@@ -57,6 +64,7 @@ _index.scss_
 
 ```
 
+if you use above config in css stylesheets may throw error, please use in scss stylesheets only
 
 ## Learn More
 
